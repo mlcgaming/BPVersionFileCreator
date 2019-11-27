@@ -36,16 +36,23 @@ namespace BuddyPalVersionFileCreator
 
             if (Directory.Exists(AppConfigDirectory) == true)
             {
-                if(File.Exists(AppConfigDirectory + "\\config.json") == true)
+                if(File.Exists(AppConfigDirectory + "\\settings.conf") == true)
+                {
+                    Options = JsonConvert.DeserializeObject<OptionsConfigFile>(File.ReadAllText(AppConfigDirectory + "\\settings.conf"));
+                    SelectedSaveDirectory = Options.SavePathDirectory;
+                }
+                else if(File.Exists(AppConfigDirectory + "\\config.json") == true)
                 {
                     Options = JsonConvert.DeserializeObject<OptionsConfigFile>(File.ReadAllText(AppConfigDirectory + "\\config.json"));
-                    SelectedSaveDirectory = Options.SavePathDirectory;
+                    string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
+                    File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
+                    File.Delete(AppConfigDirectory + "\\config.json");
                 }
                 else
                 {
                     Options = new OptionsConfigFile();
                     string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                    File.WriteAllText(AppConfigDirectory + "\\config.json", optionsFile);
+                    File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
                 }
             }
             else
@@ -53,7 +60,7 @@ namespace BuddyPalVersionFileCreator
                 Directory.CreateDirectory(AppConfigDirectory);
                 Options = new OptionsConfigFile();
                 string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                File.WriteAllText(AppConfigDirectory + "\\config.json", optionsFile);
+                File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
             }
         }
 
@@ -71,11 +78,11 @@ namespace BuddyPalVersionFileCreator
                 string savePath = folderBrowserDialog.SelectedPath;
                 VersionFile newFile = new VersionFile(Convert.ToInt32(numID.Value), chkbxActive.Checked, txtIDString.Text, txtVersionName.Text, txtFileName.Text, txtURL.Text, chkbxMods.Checked, chkbxConfigs.Checked, chkbxResourcePacks.Checked, chkbxShaders.Checked);
                 string newFileJson = JsonConvert.SerializeObject(newFile, Formatting.Indented);
-                File.WriteAllText(Path.Combine(savePath, "BPVersion.json"), newFileJson);
-                Options.SetLastSavePath(Path.Combine(savePath, "BPVersion.json"));
+                File.WriteAllText(Path.Combine(savePath, "modpack.ver"), newFileJson);
+                Options.SetLastSavePath(Path.Combine(savePath, "modpack.ver"));
                 string optionString = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC\\config.json", optionString);
-                MessageBox.Show("File Saved to " + Path.Combine(savePath, "BPVersion.json") + "!");
+                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC\\settings.conf", optionString);
+                MessageBox.Show("File Saved to " + Path.Combine(savePath, "modpack.ver") + "!");
             }
         }
 
@@ -83,14 +90,13 @@ namespace BuddyPalVersionFileCreator
         {
             ResetMainForm();
         }
-
         private void openVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             // GET SAVE LOCATION
             OpenFileDialog openFileDialog1 = new OpenFileDialog();
 
             openFileDialog1.InitialDirectory = Options.LastSavePath;
-            openFileDialog1.Filter = "BuddyPal Version files (*.json)|*.json";
+            openFileDialog1.Filter = "Modpack Version files (*.ver)|*.ver";
             openFileDialog1.FilterIndex = 0;
             openFileDialog1.RestoreDirectory = true;
 
@@ -103,7 +109,7 @@ namespace BuddyPalVersionFileCreator
                     numID.Value = versionFile.ID;
                     txtIDString.Text = versionFile.Text;
                     txtVersionName.Text = versionFile.Name;
-                    txtFileName.Text = "BPVersion.json";
+                    txtFileName.Text = "modpack.ver";
                     txtURL.Text = versionFile.URL;
                     chkbxActive.Checked = versionFile.IsActive;
                     chkbxMods.Checked = versionFile.IncludesMods;
@@ -113,11 +119,10 @@ namespace BuddyPalVersionFileCreator
                 }
                 catch
                 {
-                    MessageBox.Show("Selected File is not a BuddyPal Modpack Version File.");
+                    MessageBox.Show("Selected File is not a Modpack Version File.");
                 }
             }
         }
-
         private void saveVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
             SaveCurrentVersionFile();
@@ -141,12 +146,10 @@ namespace BuddyPalVersionFileCreator
         {
             Close();
         }
-
         private void txtIDString_TextChanged(object sender, EventArgs e)
         {
             txtFileName.Text = "BuddyPals_Modpack_" + txtIDString.Text + ".zip";
         }
-
         private void txtFileName_TextChanged(object sender, EventArgs e)
         {
             if(chkbxPTRPackage.Checked == false)
@@ -164,10 +167,26 @@ namespace BuddyPalVersionFileCreator
             if(chkbxPTRPackage.Checked == true)
             {
                 txtFileName.Text = txtFileName.Text = "BuddyPals_Modpack_" + txtIDString.Text + "_PTR.zip";
+                chkbxActive.Enabled = false;
+                chkbxMods.Enabled = false;
+                chkbxConfigs.Enabled = false;
+                chkbxResourcePacks.Enabled = false;
+                chkbxShaders.Enabled = false;
+
+                chkbxActive.Checked = true;
+                chkbxMods.Checked = true;
+                chkbxConfigs.Checked = true;
+                chkbxResourcePacks.Checked = true;
+                chkbxShaders.Checked = true;
             }
             else
             {
                 txtFileName.Text = "BuddyPals_Modpack_" + txtIDString.Text + ".zip";
+                chkbxActive.Enabled = true;
+                chkbxMods.Enabled = true;
+                chkbxConfigs.Enabled = true;
+                chkbxResourcePacks.Enabled = true;
+                chkbxShaders.Enabled = true;
             }
         }
     }
