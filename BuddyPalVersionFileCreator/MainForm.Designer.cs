@@ -28,13 +28,6 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.menuMain = new System.Windows.Forms.MenuStrip();
-            this.fileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.newVersionFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.openVersionFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.saveVersionFileToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.exitToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.lblID = new System.Windows.Forms.Label();
             this.lblIDText = new System.Windows.Forms.Label();
             this.lblVersionName = new System.Windows.Forms.Label();
@@ -51,73 +44,21 @@
             this.txtVersionName = new System.Windows.Forms.TextBox();
             this.txtIDString = new System.Windows.Forms.TextBox();
             this.groupOptions = new System.Windows.Forms.GroupBox();
+            this.chkbxForge = new System.Windows.Forms.CheckBox();
             this.chkbxPTRPackage = new System.Windows.Forms.CheckBox();
-            this.menuMain.SuspendLayout();
+            this.btnNewFile = new System.Windows.Forms.Button();
+            this.btnOpen = new System.Windows.Forms.Button();
+            this.btsSave = new System.Windows.Forms.Button();
+            this.btnExit = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numID)).BeginInit();
             this.groupOptions.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // menuMain
-            // 
-            this.menuMain.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.fileToolStripMenuItem,
-            this.helpToolStripMenuItem});
-            this.menuMain.Location = new System.Drawing.Point(0, 0);
-            this.menuMain.Name = "menuMain";
-            this.menuMain.Size = new System.Drawing.Size(301, 24);
-            this.menuMain.TabIndex = 0;
-            this.menuMain.Text = "menuMain";
-            // 
-            // fileToolStripMenuItem
-            // 
-            this.fileToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.newVersionFileToolStripMenuItem,
-            this.openVersionFileToolStripMenuItem,
-            this.saveVersionFileToolStripMenuItem,
-            this.exitToolStripMenuItem});
-            this.fileToolStripMenuItem.Name = "fileToolStripMenuItem";
-            this.fileToolStripMenuItem.Size = new System.Drawing.Size(37, 20);
-            this.fileToolStripMenuItem.Text = "File";
-            // 
-            // newVersionFileToolStripMenuItem
-            // 
-            this.newVersionFileToolStripMenuItem.Name = "newVersionFileToolStripMenuItem";
-            this.newVersionFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.newVersionFileToolStripMenuItem.Text = "New VersionFile";
-            this.newVersionFileToolStripMenuItem.Click += new System.EventHandler(this.newVersionFileToolStripMenuItem_Click);
-            // 
-            // openVersionFileToolStripMenuItem
-            // 
-            this.openVersionFileToolStripMenuItem.Name = "openVersionFileToolStripMenuItem";
-            this.openVersionFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.openVersionFileToolStripMenuItem.Text = "Open VersionFile";
-            this.openVersionFileToolStripMenuItem.Click += new System.EventHandler(this.openVersionFileToolStripMenuItem_Click);
-            // 
-            // saveVersionFileToolStripMenuItem
-            // 
-            this.saveVersionFileToolStripMenuItem.Name = "saveVersionFileToolStripMenuItem";
-            this.saveVersionFileToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.saveVersionFileToolStripMenuItem.Text = "Save VersionFile";
-            this.saveVersionFileToolStripMenuItem.Click += new System.EventHandler(this.saveVersionFileToolStripMenuItem_Click);
-            // 
-            // exitToolStripMenuItem
-            // 
-            this.exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            this.exitToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
-            this.exitToolStripMenuItem.Text = "Exit";
-            this.exitToolStripMenuItem.Click += new System.EventHandler(this.exitToolStripMenuItem_Click);
-            // 
-            // helpToolStripMenuItem
-            // 
-            this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
-            this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
-            this.helpToolStripMenuItem.Text = "Help";
             // 
             // lblID
             // 
             this.lblID.AutoSize = true;
             this.lblID.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblID.Location = new System.Drawing.Point(12, 35);
+            this.lblID.Location = new System.Drawing.Point(12, 10);
             this.lblID.Name = "lblID";
             this.lblID.Size = new System.Drawing.Size(23, 13);
             this.lblID.TabIndex = 1;
@@ -127,7 +68,7 @@
             // 
             this.lblIDText.AutoSize = true;
             this.lblIDText.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblIDText.Location = new System.Drawing.Point(12, 58);
+            this.lblIDText.Location = new System.Drawing.Point(12, 33);
             this.lblIDText.Name = "lblIDText";
             this.lblIDText.Size = new System.Drawing.Size(59, 13);
             this.lblIDText.TabIndex = 2;
@@ -137,7 +78,7 @@
             // 
             this.lblVersionName.AutoSize = true;
             this.lblVersionName.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblVersionName.Location = new System.Drawing.Point(12, 80);
+            this.lblVersionName.Location = new System.Drawing.Point(12, 55);
             this.lblVersionName.Name = "lblVersionName";
             this.lblVersionName.Size = new System.Drawing.Size(84, 13);
             this.lblVersionName.TabIndex = 4;
@@ -147,7 +88,7 @@
             // 
             this.lblFileName.AutoSize = true;
             this.lblFileName.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblFileName.Location = new System.Drawing.Point(12, 102);
+            this.lblFileName.Location = new System.Drawing.Point(12, 77);
             this.lblFileName.Name = "lblFileName";
             this.lblFileName.Size = new System.Drawing.Size(64, 13);
             this.lblFileName.TabIndex = 5;
@@ -157,7 +98,7 @@
             // 
             this.lblURL.AutoSize = true;
             this.lblURL.Font = new System.Drawing.Font("Times New Roman", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblURL.Location = new System.Drawing.Point(12, 124);
+            this.lblURL.Location = new System.Drawing.Point(12, 99);
             this.lblURL.Name = "lblURL";
             this.lblURL.Size = new System.Drawing.Size(89, 13);
             this.lblURL.TabIndex = 6;
@@ -215,7 +156,7 @@
             // 
             // numID
             // 
-            this.numID.Location = new System.Drawing.Point(106, 33);
+            this.numID.Location = new System.Drawing.Point(106, 8);
             this.numID.Maximum = new decimal(new int[] {
             10000,
             0,
@@ -227,7 +168,7 @@
             // 
             // txtURL
             // 
-            this.txtURL.Location = new System.Drawing.Point(106, 121);
+            this.txtURL.Location = new System.Drawing.Point(106, 96);
             this.txtURL.Name = "txtURL";
             this.txtURL.ReadOnly = true;
             this.txtURL.Size = new System.Drawing.Size(188, 20);
@@ -236,7 +177,7 @@
             // 
             // txtFileName
             // 
-            this.txtFileName.Location = new System.Drawing.Point(106, 99);
+            this.txtFileName.Location = new System.Drawing.Point(106, 74);
             this.txtFileName.Name = "txtFileName";
             this.txtFileName.ReadOnly = true;
             this.txtFileName.Size = new System.Drawing.Size(188, 20);
@@ -246,7 +187,7 @@
             // 
             // txtVersionName
             // 
-            this.txtVersionName.Location = new System.Drawing.Point(106, 77);
+            this.txtVersionName.Location = new System.Drawing.Point(106, 52);
             this.txtVersionName.Name = "txtVersionName";
             this.txtVersionName.Size = new System.Drawing.Size(188, 20);
             this.txtVersionName.TabIndex = 2;
@@ -254,7 +195,7 @@
             // 
             // txtIDString
             // 
-            this.txtIDString.Location = new System.Drawing.Point(106, 55);
+            this.txtIDString.Location = new System.Drawing.Point(106, 30);
             this.txtIDString.Name = "txtIDString";
             this.txtIDString.Size = new System.Drawing.Size(188, 20);
             this.txtIDString.TabIndex = 1;
@@ -263,24 +204,36 @@
             // 
             // groupOptions
             // 
+            this.groupOptions.Controls.Add(this.chkbxForge);
             this.groupOptions.Controls.Add(this.chkbxPTRPackage);
             this.groupOptions.Controls.Add(this.chkbxActive);
             this.groupOptions.Controls.Add(this.chkbxMods);
             this.groupOptions.Controls.Add(this.chkbxConfigs);
             this.groupOptions.Controls.Add(this.chkbxResourcePacks);
             this.groupOptions.Controls.Add(this.chkbxShaders);
-            this.groupOptions.Location = new System.Drawing.Point(66, 147);
+            this.groupOptions.Location = new System.Drawing.Point(15, 122);
             this.groupOptions.Name = "groupOptions";
-            this.groupOptions.Size = new System.Drawing.Size(157, 155);
+            this.groupOptions.Size = new System.Drawing.Size(157, 178);
             this.groupOptions.TabIndex = 18;
             this.groupOptions.TabStop = false;
             this.groupOptions.Text = "Options";
+            // 
+            // chkbxForge
+            // 
+            this.chkbxForge.AutoSize = true;
+            this.chkbxForge.Location = new System.Drawing.Point(6, 134);
+            this.chkbxForge.Name = "chkbxForge";
+            this.chkbxForge.Size = new System.Drawing.Size(120, 17);
+            this.chkbxForge.TabIndex = 11;
+            this.chkbxForge.Text = "Includes Forge Files";
+            this.chkbxForge.UseVisualStyleBackColor = true;
+            this.chkbxForge.CheckedChanged += new System.EventHandler(this.chkbxForge_CheckedChanged);
             // 
             // chkbxPTRPackage
             // 
             this.chkbxPTRPackage.AutoSize = true;
             this.chkbxPTRPackage.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.chkbxPTRPackage.Location = new System.Drawing.Point(6, 134);
+            this.chkbxPTRPackage.Location = new System.Drawing.Point(6, 157);
             this.chkbxPTRPackage.Name = "chkbxPTRPackage";
             this.chkbxPTRPackage.Size = new System.Drawing.Size(105, 17);
             this.chkbxPTRPackage.TabIndex = 10;
@@ -288,11 +241,55 @@
             this.chkbxPTRPackage.UseVisualStyleBackColor = true;
             this.chkbxPTRPackage.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
+            // btnNewFile
+            // 
+            this.btnNewFile.Location = new System.Drawing.Point(198, 158);
+            this.btnNewFile.Name = "btnNewFile";
+            this.btnNewFile.Size = new System.Drawing.Size(75, 23);
+            this.btnNewFile.TabIndex = 19;
+            this.btnNewFile.Text = "New File";
+            this.btnNewFile.UseVisualStyleBackColor = true;
+            this.btnNewFile.Click += new System.EventHandler(this.btnNewFile_Click);
+            // 
+            // btnOpen
+            // 
+            this.btnOpen.Location = new System.Drawing.Point(198, 187);
+            this.btnOpen.Name = "btnOpen";
+            this.btnOpen.Size = new System.Drawing.Size(75, 23);
+            this.btnOpen.TabIndex = 20;
+            this.btnOpen.Text = "Open File";
+            this.btnOpen.UseVisualStyleBackColor = true;
+            this.btnOpen.Click += new System.EventHandler(this.btnOpen_Click);
+            // 
+            // btsSave
+            // 
+            this.btsSave.Location = new System.Drawing.Point(198, 216);
+            this.btsSave.Name = "btsSave";
+            this.btsSave.Size = new System.Drawing.Size(75, 23);
+            this.btsSave.TabIndex = 21;
+            this.btsSave.Text = "Save File";
+            this.btsSave.UseVisualStyleBackColor = true;
+            this.btsSave.Click += new System.EventHandler(this.btsSave_Click);
+            // 
+            // btnExit
+            // 
+            this.btnExit.Location = new System.Drawing.Point(198, 244);
+            this.btnExit.Name = "btnExit";
+            this.btnExit.Size = new System.Drawing.Size(75, 23);
+            this.btnExit.TabIndex = 22;
+            this.btnExit.Text = "Exit";
+            this.btnExit.UseVisualStyleBackColor = true;
+            this.btnExit.Click += new System.EventHandler(this.btnExit_Click);
+            // 
             // MainForm
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(301, 310);
+            this.ClientSize = new System.Drawing.Size(301, 311);
+            this.Controls.Add(this.btnExit);
+            this.Controls.Add(this.btsSave);
+            this.Controls.Add(this.btnOpen);
+            this.Controls.Add(this.btnNewFile);
             this.Controls.Add(this.groupOptions);
             this.Controls.Add(this.txtIDString);
             this.Controls.Add(this.txtVersionName);
@@ -304,15 +301,11 @@
             this.Controls.Add(this.lblVersionName);
             this.Controls.Add(this.lblIDText);
             this.Controls.Add(this.lblID);
-            this.Controls.Add(this.menuMain);
-            this.MainMenuStrip = this.menuMain;
             this.MaximizeBox = false;
             this.MinimizeBox = false;
             this.Name = "MainForm";
             this.ShowIcon = false;
             this.Text = "BuddyPal VersionFile Creator";
-            this.menuMain.ResumeLayout(false);
-            this.menuMain.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.numID)).EndInit();
             this.groupOptions.ResumeLayout(false);
             this.groupOptions.PerformLayout();
@@ -322,14 +315,6 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.MenuStrip menuMain;
-        private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem newVersionFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem openVersionFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem saveVersionFileToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem exitToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.Label lblID;
         private System.Windows.Forms.Label lblIDText;
         private System.Windows.Forms.Label lblVersionName;
@@ -347,6 +332,11 @@
         private System.Windows.Forms.TextBox txtIDString;
         private System.Windows.Forms.GroupBox groupOptions;
         private System.Windows.Forms.CheckBox chkbxPTRPackage;
+        private System.Windows.Forms.CheckBox chkbxForge;
+        private System.Windows.Forms.Button btnNewFile;
+        private System.Windows.Forms.Button btnOpen;
+        private System.Windows.Forms.Button btsSave;
+        private System.Windows.Forms.Button btnExit;
     }
 }
 

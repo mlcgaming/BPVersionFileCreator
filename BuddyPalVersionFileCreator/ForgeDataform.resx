@@ -117,4 +117,15 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="lblInstructions.Text" xml:space="preserve">
+    <value>Enter the Version and Installation Name to be deployed with the Modpack patch.
+
+Version MUST match the JSON name present in %appdata%/.minecraft/versions/&lt;ForgeVersion&gt;/&lt;Version&gt;.json
+
+Installation Name is the Display Name next to the PLAY button on the Minecraft Launcher. The current standard for
+this is " BuddyPals " + the modpack version.  (e.g. "BuddyPals 1.3.0")</value>
+  </data>
+  <metadata name="$this.Locked" type="System.Boolean, mscorlib, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089">
+    <value>True</value>
+  </metadata>
 </root>

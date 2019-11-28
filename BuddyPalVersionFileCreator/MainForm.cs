@@ -21,6 +21,8 @@ namespace BuddyPalVersionFileCreator
         public static string MCVersion { get; private set; }
 
         private OptionsConfigFile Options;
+        private ForgeDataForm ForgeForm;
+        private Forge LoadedForge;
 
         public MainForm()
         {
@@ -62,28 +64,8 @@ namespace BuddyPalVersionFileCreator
                 string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
                 File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
             }
-        }
 
-        private void SaveCurrentVersionFile()
-        {
-            // GET SAVE LOCATION
-            var folderBrowserDialog = new FolderBrowserDialog();
-
-            // Show the FolderBrowserDialog.
-            folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
-            folderBrowserDialog.SelectedPath = SelectedSaveDirectory;
-            DialogResult result = folderBrowserDialog.ShowDialog();
-            if (result == DialogResult.OK)
-            {
-                string savePath = folderBrowserDialog.SelectedPath;
-                VersionFile newFile = new VersionFile(Convert.ToInt32(numID.Value), chkbxActive.Checked, txtIDString.Text, txtVersionName.Text, txtFileName.Text, txtURL.Text, chkbxMods.Checked, chkbxConfigs.Checked, chkbxResourcePacks.Checked, chkbxShaders.Checked);
-                string newFileJson = JsonConvert.SerializeObject(newFile, Formatting.Indented);
-                File.WriteAllText(Path.Combine(savePath, "modpack.ver"), newFileJson);
-                Options.SetLastSavePath(Path.Combine(savePath, "modpack.ver"));
-                string optionString = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC\\settings.conf", optionString);
-                MessageBox.Show("File Saved to " + Path.Combine(savePath, "modpack.ver") + "!");
-            }
+            LoadedForge = null;
         }
 
         private void newVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -92,36 +74,7 @@ namespace BuddyPalVersionFileCreator
         }
         private void openVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            // GET SAVE LOCATION
-            OpenFileDialog openFileDialog1 = new OpenFileDialog();
-
-            openFileDialog1.InitialDirectory = Options.LastSavePath;
-            openFileDialog1.Filter = "Modpack Version files (*.ver)|*.ver";
-            openFileDialog1.FilterIndex = 0;
-            openFileDialog1.RestoreDirectory = true;
-
-            if (openFileDialog1.ShowDialog() == DialogResult.OK)
-            {
-                string selectedFileName = openFileDialog1.FileName;
-                try
-                {
-                    VersionFile versionFile = JsonConvert.DeserializeObject<VersionFile>(File.ReadAllText(selectedFileName));
-                    numID.Value = versionFile.ID;
-                    txtIDString.Text = versionFile.Text;
-                    txtVersionName.Text = versionFile.Name;
-                    txtFileName.Text = "modpack.ver";
-                    txtURL.Text = versionFile.URL;
-                    chkbxActive.Checked = versionFile.IsActive;
-                    chkbxMods.Checked = versionFile.IncludesMods;
-                    chkbxConfigs.Checked = versionFile.IncludesConfig;
-                    chkbxResourcePacks.Checked = versionFile.IncludesResourcePack;
-                    chkbxShaders.Checked = versionFile.IncludesShaders;
-                }
-                catch
-                {
-                    MessageBox.Show("Selected File is not a Modpack Version File.");
-                }
-            }
+            OpenVersionFile();
         }
         private void saveVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -140,6 +93,76 @@ namespace BuddyPalVersionFileCreator
             chkbxConfigs.Checked = false;
             chkbxResourcePacks.Checked = false;
             chkbxShaders.Checked = false;
+        }
+        private void SaveCurrentVersionFile()
+        {
+            // GET SAVE LOCATION
+            var folderBrowserDialog = new FolderBrowserDialog();
+
+            // Show the FolderBrowserDialog.
+            folderBrowserDialog.RootFolder = Environment.SpecialFolder.Desktop;
+            folderBrowserDialog.SelectedPath = SelectedSaveDirectory;
+            DialogResult result = folderBrowserDialog.ShowDialog();
+            if (result == DialogResult.OK)
+            {
+                string savePath = folderBrowserDialog.SelectedPath;
+                VersionFile newFile = new VersionFile(Convert.ToInt32(numID.Value), chkbxActive.Checked, txtIDString.Text, txtVersionName.Text, txtFileName.Text, txtURL.Text, chkbxMods.Checked, chkbxConfigs.Checked, chkbxResourcePacks.Checked, chkbxShaders.Checked, chkbxForge.Checked);
+                
+                if(LoadedForge != null && chkbxForge.Checked == true)
+                {
+                    newFile.AddForgeItem(LoadedForge);
+                }
+                
+                string newFileJson = JsonConvert.SerializeObject(newFile, Formatting.Indented);
+                File.WriteAllText(Path.Combine(savePath, "modpack.ver"), newFileJson);
+                Options.SetLastSavePath(Path.Combine(savePath, "modpack.ver"));
+                string optionString = JsonConvert.SerializeObject(Options, Formatting.Indented);
+                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC\\settings.conf", optionString);
+                MessageBox.Show("File Saved to " + Path.Combine(savePath, "modpack.ver") + "!");
+            }
+        }
+        private void OpenVersionFile()
+        {
+            // GET SAVE LOCATION
+            OpenFileDialog openFileDialog1 = new OpenFileDialog();
+
+            openFileDialog1.InitialDirectory = Options.LastSavePath;
+            openFileDialog1.Filter = "Modpack Version files (*.ver)|*.ver";
+            openFileDialog1.FilterIndex = 0;
+            openFileDialog1.RestoreDirectory = true;
+
+            if (openFileDialog1.ShowDialog() == DialogResult.OK)
+            {
+                string selectedFileName = openFileDialog1.FileName;
+                try
+                {
+                    VersionFile versionFile = JsonConvert.DeserializeObject<VersionFile>(File.ReadAllText(selectedFileName));
+                    numID.Value = versionFile.ID;
+                    txtIDString.Text = versionFile.Text;
+                    txtVersionName.Text = versionFile.Name;
+                    txtFileName.Text = versionFile.FileName;
+                    txtURL.Text = versionFile.URL;
+                    chkbxActive.Checked = versionFile.IsActive;
+                    chkbxMods.Checked = versionFile.IncludesMods;
+                    chkbxConfigs.Checked = versionFile.IncludesConfig;
+                    chkbxResourcePacks.Checked = versionFile.IncludesResourcePack;
+                    chkbxShaders.Checked = versionFile.IncludesShaders;
+                    chkbxForge.Checked = versionFile.IncludesForge;
+                }
+                catch
+                {
+                    MessageBox.Show("Selected File is not a Modpack Version File.");
+                }
+            }
+        }
+
+        public void EnterForgeDataEntry(string forgeVersionId, string installationName)
+        {
+            LoadedForge = new Forge(installationName, forgeVersionId);
+        }
+        public void CancelForgeDataEntry()
+        {
+            chkbxForge.Checked = false;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -187,6 +210,49 @@ namespace BuddyPalVersionFileCreator
                 chkbxConfigs.Enabled = true;
                 chkbxResourcePacks.Enabled = true;
                 chkbxShaders.Enabled = true;
+            }
+        }
+
+        private void btnNewFile_Click(object sender, EventArgs e)
+        {
+            ResetMainForm();
+        }
+        private void btnOpen_Click(object sender, EventArgs e)
+        {
+            OpenVersionFile();
+        }
+        private void btsSave_Click(object sender, EventArgs e)
+        {
+            SaveCurrentVersionFile();
+        }
+        private void btnExit_Click(object sender, EventArgs e)
+        {
+            Close();
+        }
+
+        private void chkbxForge_CheckedChanged(object sender, EventArgs e)
+        {
+            if(chkbxForge.Checked == true)
+            {
+                // Open a ForgeDataForm to get Data
+                ForgeForm = new ForgeDataForm(this);
+                ForgeForm.FormClosing += ForgeDataForm_FormClosing;
+                ForgeForm.ShowDialog();
+            }
+            else
+            {
+                if(LoadedForge != null)
+                {
+                    LoadedForge = null;
+                }
+            }
+        }
+
+        private void ForgeDataForm_FormClosing(object sender, FormClosingEventArgs e)
+        {
+            if(ForgeForm.IsDataEntered == false)
+            {
+                chkbxForge.Checked = false;
             }
         }
     }
