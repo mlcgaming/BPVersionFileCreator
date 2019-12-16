@@ -25,8 +25,8 @@
     <MapFileExtensions>true</MapFileExtensions>
     <InstallUrl>http://mc.mlcgaming.com/downloads/VFC/bin/</InstallUrl>
     <UpdateUrl>http://mc.mlcgaming.com/downloads/VFC/bin/</UpdateUrl>
-    <ApplicationRevision>5</ApplicationRevision>
-    <ApplicationVersion>1.1.0.%2a</ApplicationVersion>
+    <ApplicationRevision>3</ApplicationRevision>
+    <ApplicationVersion>2.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
@@ -63,6 +63,9 @@
     <SignManifests>true</SignManifests>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="BuddyPals">
+      <HintPath>..\..\BuddyPals\BuddyPals\bin\Debug\BuddyPals.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -79,7 +82,10 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Forge.cs" />
+    <Compile Include="DirectoryFiles\Forge.cs" />
+    <Compile Include="DirectoryFiles\Mod.cs" />
+    <Compile Include="DirectoryFiles\ModpackManifest.cs" />
+    <Compile Include="DirectoryFiles\ModpackVerFile.cs" />
     <Compile Include="ForgeDataForm.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -92,10 +98,10 @@
     <Compile Include="MainForm.Designer.cs">
       <DependentUpon>MainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="OptionsConfigFile.cs" />
+    <Compile Include="DirectoryFiles\OptionsConfigFile.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="VersionFile.cs" />
+    <Compile Include="DirectoryFiles\VersionFile.cs" />
     <EmbeddedResource Include="ForgeDataForm.resx">
       <DependentUpon>ForgeDataForm.cs</DependentUpon>
     </EmbeddedResource>

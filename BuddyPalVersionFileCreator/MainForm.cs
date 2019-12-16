@@ -8,6 +8,8 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using BuddyPals;
+using BuddyPals.Versioning;
 using Newtonsoft.Json;
 
 namespace BuddyPalVersionFileCreator
@@ -32,6 +34,14 @@ namespace BuddyPalVersionFileCreator
 
         private void InitializeMainForm()
         {
+            Library.Initialize();
+            InitializeForgeDropdown();
+
+            foreach(ModPackage mod in Library.Mods)
+            {
+                cmbModList.Items.Add(mod.Name);
+            }
+            cmbModList.SelectedIndex = 0;
             ResetMainForm();
 
             AppConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC";
@@ -67,6 +77,13 @@ namespace BuddyPalVersionFileCreator
 
             LoadedForge = null;
         }
+        private void InitializeForgeDropdown()
+        {
+            cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2772);
+            cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2779);
+            cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2838);
+            cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2847);
+        }
 
         private void newVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -93,6 +110,7 @@ namespace BuddyPalVersionFileCreator
             chkbxConfigs.Checked = false;
             chkbxResourcePacks.Checked = false;
             chkbxShaders.Checked = false;
+            cboxRequiredForge.SelectedItem = Library.LatestForgeVersion;
         }
         private void SaveCurrentVersionFile()
         {
@@ -105,13 +123,15 @@ namespace BuddyPalVersionFileCreator
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
+                Dictionary<string, bool> toBeUpdated = new Dictionary<string, bool>();
+                toBeUpdated.Add("mods", chkbxMods.Checked);
+                toBeUpdated.Add("config", chkbxConfigs.Checked);
+                toBeUpdated.Add("resourcePacks", chkbxResourcePacks.Checked);
+                toBeUpdated.Add("shaderPacks", chkbxShaders.Checked);
+                toBeUpdated.Add("scripts", chkbxScripts.Checked);
+
                 string savePath = folderBrowserDialog.SelectedPath;
-                VersionFile newFile = new VersionFile(Convert.ToInt32(numID.Value), chkbxActive.Checked, txtIDString.Text, txtVersionName.Text, txtFileName.Text, txtURL.Text, chkbxMods.Checked, chkbxConfigs.Checked, chkbxResourcePacks.Checked, chkbxShaders.Checked, chkbxForge.Checked);
-                
-                if(LoadedForge != null && chkbxForge.Checked == true)
-                {
-                    newFile.AddForgeItem(LoadedForge);
-                }
+                ModpackVerFile newFile = new ModpackVerFile(Convert.ToInt32(numID.Value), chkbxActive.Checked, txtIDString.Text, txtVersionName.Text, txtFileName.Text, txtURL.Text, toBeUpdated, 2);
                 
                 string newFileJson = JsonConvert.SerializeObject(newFile, Formatting.Indented);
                 File.WriteAllText(Path.Combine(savePath, "modpack.ver"), newFileJson);
@@ -147,7 +167,7 @@ namespace BuddyPalVersionFileCreator
                     chkbxConfigs.Checked = versionFile.IncludesConfig;
                     chkbxResourcePacks.Checked = versionFile.IncludesResourcePack;
                     chkbxShaders.Checked = versionFile.IncludesShaders;
-                    chkbxForge.Checked = versionFile.IncludesForge;
+                    //chkbxForge.Checked = versionFile.IncludesForge;
                 }
                 catch
                 {
@@ -162,7 +182,7 @@ namespace BuddyPalVersionFileCreator
         }
         public void CancelForgeDataEntry()
         {
-            chkbxForge.Checked = false;
+            //chkbxForge.Checked = false;
         }
 
         private void exitToolStripMenuItem_Click(object sender, EventArgs e)
@@ -175,42 +195,12 @@ namespace BuddyPalVersionFileCreator
         }
         private void txtFileName_TextChanged(object sender, EventArgs e)
         {
-            if(chkbxPTRPackage.Checked == false)
-            {
-                txtURL.Text = "ftp://mc.mlcgaming.com/modpack/" + txtFileName.Text;
-            }
-            else
-            {
-                txtURL.Text = "ftp://mc.mlcgaming.com/modpack/PTR/" + txtFileName.Text;
-            }
+            txtURL.Text = "ftp://mc.mlcgaming.com/modpack/" + txtFileName.Text;
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            if(chkbxPTRPackage.Checked == true)
-            {
-                txtFileName.Text = txtFileName.Text = "BuddyPals_Modpack_" + txtIDString.Text + "_PTR.zip";
-                chkbxActive.Enabled = false;
-                chkbxMods.Enabled = false;
-                chkbxConfigs.Enabled = false;
-                chkbxResourcePacks.Enabled = false;
-                chkbxShaders.Enabled = false;
-
-                chkbxActive.Checked = true;
-                chkbxMods.Checked = true;
-                chkbxConfigs.Checked = true;
-                chkbxResourcePacks.Checked = true;
-                chkbxShaders.Checked = true;
-            }
-            else
-            {
-                txtFileName.Text = "BuddyPals_Modpack_" + txtIDString.Text + ".zip";
-                chkbxActive.Enabled = true;
-                chkbxMods.Enabled = true;
-                chkbxConfigs.Enabled = true;
-                chkbxResourcePacks.Enabled = true;
-                chkbxShaders.Enabled = true;
-            }
+            txtURL.Text = "ftp://mc.mlcgaming.com/modpack/" + txtFileName.Text;
         }
 
         private void btnNewFile_Click(object sender, EventArgs e)
@@ -230,29 +220,114 @@ namespace BuddyPalVersionFileCreator
             Close();
         }
 
-        private void chkbxForge_CheckedChanged(object sender, EventArgs e)
-        {
-            if(chkbxForge.Checked == true)
-            {
-                // Open a ForgeDataForm to get Data
-                ForgeForm = new ForgeDataForm(this);
-                ForgeForm.FormClosing += ForgeDataForm_FormClosing;
-                ForgeForm.ShowDialog();
-            }
-            else
-            {
-                if(LoadedForge != null)
-                {
-                    LoadedForge = null;
-                }
-            }
-        }
-
         private void ForgeDataForm_FormClosing(object sender, FormClosingEventArgs e)
         {
             if(ForgeForm.IsDataEntered == false)
             {
-                chkbxForge.Checked = false;
+                //chkbxForge.Checked = false;
+            }
+        }
+
+        private void cmbModList_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(cmbModFileHistory.Items.Count > 0)
+            {
+                for(int i = cmbModFileHistory.Items.Count - 1; i >= 0; i--)
+                {
+                    cmbModFileHistory.Items.RemoveAt(i);
+                }
+            }
+            if(cmbModConfigFiles.Items.Count > 0)
+            {
+                for (int i = cmbModConfigFiles.Items.Count - 1; i >= 0; i--)
+                {
+                    cmbModConfigFiles.Items.RemoveAt(i);
+                }
+            }
+
+            foreach(ModPackage mod in Library.Mods)
+            {
+                if(mod.Name == cmbModList.Text)
+                {
+                    tboxModFileName.Text = mod.Latest;
+                    chkboxModEnabled.Checked = mod.Enabled;
+                    chkboxModForced.Checked = mod.Forced;
+                    if(mod.History.Count > 0)
+                    {
+                        // Enable History Dropdown
+                        cmbModFileHistory.Enabled = true;
+
+                        foreach(string file in mod.History)
+                        {
+                            // Fill History Dropdown
+                            cmbModFileHistory.Items.Add(file);
+                        }
+
+                        cmbModFileHistory.SelectedIndex = 0;
+                    }
+                    else
+                    {
+                        cmbModFileHistory.Enabled = false;
+                    }
+
+                    switch (mod.Config.Type)
+                    {
+                        case ConfigPackage.ConfigType.File:
+                            {
+                                radioModConfigTypeFile.Checked = true;
+                                radioModConfigTypeFolder.Checked = false;
+                                radioModConfigTypeNull.Checked = false;
+                                break;
+                            }
+                        case ConfigPackage.ConfigType.Directory:
+                            {
+                                radioModConfigTypeFile.Checked = false;
+                                radioModConfigTypeFolder.Checked = true;
+                                radioModConfigTypeNull.Checked = false;
+                                break;
+                            }
+                        case ConfigPackage.ConfigType.Null:
+                            {
+                                radioModConfigTypeFile.Checked = false;
+                                radioModConfigTypeFolder.Checked = false;
+                                radioModConfigTypeNull.Checked = true;
+                                break;
+                            }
+                    }
+
+                    foreach(string file in mod.Config.PathName)
+                    {
+                        cmbModConfigFiles.Items.Add(file);
+                    }
+
+                    cmbModConfigFiles.SelectedIndex = 0;
+                }
+            }
+        }
+
+        private void radioModConfigTypeFile_CheckedChanged(object sender, EventArgs e)
+        {
+            if(radioModConfigTypeFile.Checked == true)
+            {
+                radioModConfigTypeFolder.Checked = false;
+                radioModConfigTypeNull.Checked = false;
+            }
+        }
+        private void radioModConfigTypeFolder_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioModConfigTypeFolder.Checked == true)
+            {
+                radioModConfigTypeFile.Checked = false;
+                radioModConfigTypeNull.Checked = false;
+            }
+        }
+
+        private void radioModConfigTypeNull_CheckedChanged(object sender, EventArgs e)
+        {
+            if (radioModConfigTypeNull.Checked == true)
+            {
+                radioModConfigTypeFolder.Checked = false;
+                radioModConfigTypeFile.Checked = false;
             }
         }
     }
