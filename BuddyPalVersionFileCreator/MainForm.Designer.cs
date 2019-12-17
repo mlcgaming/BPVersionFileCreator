@@ -54,6 +54,7 @@
             this.lblModOldFiles = new System.Windows.Forms.Label();
             this.cmbModFileHistory = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cmbModConfigFiles = new System.Windows.Forms.ComboBox();
             this.lblModConfigType = new System.Windows.Forms.Label();
             this.lblModConfigName = new System.Windows.Forms.Label();
             this.radioModConfigTypeFile = new System.Windows.Forms.RadioButton();
@@ -66,7 +67,6 @@
             this.cmbModList = new System.Windows.Forms.ComboBox();
             this.lblRequiredForge = new System.Windows.Forms.Label();
             this.cboxRequiredForge = new System.Windows.Forms.ComboBox();
-            this.cmbModConfigFiles = new System.Windows.Forms.ComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.numID)).BeginInit();
             this.groupOptions.SuspendLayout();
             this.grpMods.SuspendLayout();
@@ -156,6 +156,7 @@
             // chkbxResourcePacks
             // 
             this.chkbxResourcePacks.AutoSize = true;
+            this.chkbxResourcePacks.Enabled = false;
             this.chkbxResourcePacks.Location = new System.Drawing.Point(6, 88);
             this.chkbxResourcePacks.Name = "chkbxResourcePacks";
             this.chkbxResourcePacks.Size = new System.Drawing.Size(143, 17);
@@ -166,6 +167,7 @@
             // chkbxShaders
             // 
             this.chkbxShaders.AutoSize = true;
+            this.chkbxShaders.Enabled = false;
             this.chkbxShaders.Location = new System.Drawing.Point(6, 111);
             this.chkbxShaders.Name = "chkbxShaders";
             this.chkbxShaders.Size = new System.Drawing.Size(103, 17);
@@ -346,6 +348,15 @@
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Config Data";
             // 
+            // cmbModConfigFiles
+            // 
+            this.cmbModConfigFiles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.cmbModConfigFiles.FormattingEnabled = true;
+            this.cmbModConfigFiles.Location = new System.Drawing.Point(75, 50);
+            this.cmbModConfigFiles.Name = "cmbModConfigFiles";
+            this.cmbModConfigFiles.Size = new System.Drawing.Size(151, 21);
+            this.cmbModConfigFiles.TabIndex = 15;
+            // 
             // lblModConfigType
             // 
             this.lblModConfigType.AutoSize = true;
@@ -464,15 +475,6 @@
             this.cboxRequiredForge.Name = "cboxRequiredForge";
             this.cboxRequiredForge.Size = new System.Drawing.Size(313, 21);
             this.cboxRequiredForge.TabIndex = 25;
-            // 
-            // cmbModConfigFiles
-            // 
-            this.cmbModConfigFiles.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.cmbModConfigFiles.FormattingEnabled = true;
-            this.cmbModConfigFiles.Location = new System.Drawing.Point(75, 50);
-            this.cmbModConfigFiles.Name = "cmbModConfigFiles";
-            this.cmbModConfigFiles.Size = new System.Drawing.Size(151, 21);
-            this.cmbModConfigFiles.TabIndex = 15;
             // 
             // MainForm
             // 

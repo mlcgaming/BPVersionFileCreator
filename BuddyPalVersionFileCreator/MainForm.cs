@@ -18,13 +18,14 @@ namespace BuddyPalVersionFileCreator
     {
         public VersionFile LoadedVersionFile { get; private set; }
         public string SelectedSaveDirectory { get; private set; }
-        public static string AppConfigDirectory { get; private set; }
         
         public static string MCVersion { get; private set; }
 
         private OptionsConfigFile Options;
         private ForgeDataForm ForgeForm;
-        private Forge LoadedForge;
+        private ForgePackage LoadedForge;
+
+        private Manifest Manifest;
 
         public MainForm()
         {
@@ -35,47 +36,56 @@ namespace BuddyPalVersionFileCreator
         private void InitializeMainForm()
         {
             Library.Initialize();
-            InitializeForgeDropdown();
+            InitializeDefaults();
 
-            foreach(ModPackage mod in Library.Mods)
-            {
-                cmbModList.Items.Add(mod.Name);
-            }
-            cmbModList.SelectedIndex = 0;
+            Manifest = JsonConvert.DeserializeObject<Manifest>(File.ReadAllText(Library.VFCManifestFilePath));
+
+            InitializeForgeDropdown();
+            InitializeModDropdown();
             ResetMainForm();
 
-            AppConfigDirectory = Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC";
-
-            if (Directory.Exists(AppConfigDirectory) == true)
+            if (Directory.Exists(Library.VFCDirectory) == true)
             {
-                if(File.Exists(AppConfigDirectory + "\\settings.conf") == true)
+                if(File.Exists(Library.VFCDirectory + "\\settings.conf") == true)
                 {
-                    Options = JsonConvert.DeserializeObject<OptionsConfigFile>(File.ReadAllText(AppConfigDirectory + "\\settings.conf"));
+                    Options = JsonConvert.DeserializeObject<OptionsConfigFile>(File.ReadAllText(Library.VFCDirectory + "\\settings.conf"));
                     SelectedSaveDirectory = Options.SavePathDirectory;
                 }
-                else if(File.Exists(AppConfigDirectory + "\\config.json") == true)
+                else if(File.Exists(Library.VFCDirectory + "\\config.json") == true)
                 {
-                    Options = JsonConvert.DeserializeObject<OptionsConfigFile>(File.ReadAllText(AppConfigDirectory + "\\config.json"));
+                    Options = JsonConvert.DeserializeObject<OptionsConfigFile>(File.ReadAllText(Library.VFCDirectory + "\\config.json"));
                     string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                    File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
-                    File.Delete(AppConfigDirectory + "\\config.json");
+                    File.WriteAllText(Library.VFCDirectory + "\\settings.conf", optionsFile);
+                    File.Delete(Library.VFCDirectory + "\\config.json");
                 }
                 else
                 {
                     Options = new OptionsConfigFile();
                     string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                    File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
+                    File.WriteAllText(Library.VFCDirectory + "\\settings.conf", optionsFile);
                 }
             }
             else
             {
-                Directory.CreateDirectory(AppConfigDirectory);
+                Directory.CreateDirectory(Library.VFCDirectory);
                 Options = new OptionsConfigFile();
                 string optionsFile = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                File.WriteAllText(AppConfigDirectory + "\\settings.conf", optionsFile);
+                File.WriteAllText(Library.VFCDirectory + "\\settings.conf", optionsFile);
             }
 
             LoadedForge = null;
+        }
+        private void InitializeDefaults()
+        {
+            if (Directory.Exists(Library.VFCDirectory) == false)
+            {
+                Directory.CreateDirectory(Library.VFCDirectory);
+            }
+            if (File.Exists(Library.VFCManifestFilePath) == false)
+            {
+                string manifestString = JsonConvert.SerializeObject(Library.DefaultManifest, Formatting.Indented);
+                File.WriteAllText(Library.VFCManifestFilePath, manifestString);
+            }
         }
         private void InitializeForgeDropdown()
         {
@@ -83,6 +93,14 @@ namespace BuddyPalVersionFileCreator
             cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2779);
             cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2838);
             cboxRequiredForge.Items.Add(Library.FORGE_VERSION_1_12_2_2847);
+        }
+        private void InitializeModDropdown()
+        {
+            foreach (ModPackage mod in Manifest.Mods)
+            {
+                cmbModList.Items.Add(mod.Name);
+            }
+            cmbModList.SelectedIndex = 0;
         }
 
         private void newVersionFileToolStripMenuItem_Click(object sender, EventArgs e)
@@ -123,22 +141,14 @@ namespace BuddyPalVersionFileCreator
             DialogResult result = folderBrowserDialog.ShowDialog();
             if (result == DialogResult.OK)
             {
-                Dictionary<string, bool> toBeUpdated = new Dictionary<string, bool>();
-                toBeUpdated.Add("mods", chkbxMods.Checked);
-                toBeUpdated.Add("config", chkbxConfigs.Checked);
-                toBeUpdated.Add("resourcePacks", chkbxResourcePacks.Checked);
-                toBeUpdated.Add("shaderPacks", chkbxShaders.Checked);
-                toBeUpdated.Add("scripts", chkbxScripts.Checked);
+                // Save the VersionFile!!
+                VersionFile newFile = new VersionFile(Convert.ToInt32(numID.Value), txtIDString.Text, chkbxActive.Checked, txtVersionName.Text,
+                    txtFileName.Text, txtURL.Text, chkbxMods.Checked, chkbxConfigs.Checked, chkbxScripts.Checked, chkbxResourcePacks.Checked, chkbxShaders.Checked, cboxRequiredForge.Text,
+                    Manifest);
 
-                string savePath = folderBrowserDialog.SelectedPath;
-                ModpackVerFile newFile = new ModpackVerFile(Convert.ToInt32(numID.Value), chkbxActive.Checked, txtIDString.Text, txtVersionName.Text, txtFileName.Text, txtURL.Text, toBeUpdated, 2);
-                
-                string newFileJson = JsonConvert.SerializeObject(newFile, Formatting.Indented);
-                File.WriteAllText(Path.Combine(savePath, "modpack.ver"), newFileJson);
-                Options.SetLastSavePath(Path.Combine(savePath, "modpack.ver"));
-                string optionString = JsonConvert.SerializeObject(Options, Formatting.Indented);
-                File.WriteAllText(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData) + "\\BuddyPals\\VFC\\settings.conf", optionString);
-                MessageBox.Show("File Saved to " + Path.Combine(savePath, "modpack.ver") + "!");
+                string newFileString = JsonConvert.SerializeObject(newFile, Formatting.Indented);
+                File.WriteAllText(Path.Combine(SelectedSaveDirectory, "client.ver"), newFileString);
+                MessageBox.Show("New Version File saved to " + Path.Combine(SelectedSaveDirectory, "client.ver"));
             }
         }
         private void OpenVersionFile()
@@ -156,18 +166,27 @@ namespace BuddyPalVersionFileCreator
                 string selectedFileName = openFileDialog1.FileName;
                 try
                 {
-                    VersionFile versionFile = JsonConvert.DeserializeObject<VersionFile>(File.ReadAllText(selectedFileName));
-                    numID.Value = versionFile.ID;
-                    txtIDString.Text = versionFile.Text;
-                    txtVersionName.Text = versionFile.Name;
-                    txtFileName.Text = versionFile.FileName;
-                    txtURL.Text = versionFile.URL;
-                    chkbxActive.Checked = versionFile.IsActive;
-                    chkbxMods.Checked = versionFile.IncludesMods;
-                    chkbxConfigs.Checked = versionFile.IncludesConfig;
-                    chkbxResourcePacks.Checked = versionFile.IncludesResourcePack;
-                    chkbxShaders.Checked = versionFile.IncludesShaders;
-                    //chkbxForge.Checked = versionFile.IncludesForge;
+                    // Instantiate VersionFile from 'selectedFileName'
+                    VersionFile version = JsonConvert.DeserializeObject<VersionFile>(File.ReadAllText(selectedFileName));
+                    txtFileName.Text = version.FileName;
+                    txtIDString.Text = version.DisplayID;
+                    txtURL.Text = version.URL;
+                    txtVersionName.Text = version.VersionName;
+                    numID.Value = version.ID;
+                    chkbxActive.Checked = version.IsActive;
+                    chkbxMods.Checked = version.UpdatePackages[Library.MOD_ID];
+                    chkbxConfigs.Checked = version.UpdatePackages[Library.CONFIG_ID];
+                    chkbxScripts.Checked = version.UpdatePackages[Library.SCRIPTS_ID];
+                    chkbxResourcePacks.Checked = version.UpdatePackages[Library.RESOURCEPACK_ID];
+                    chkbxShaders.Checked = version.UpdatePackages[Library.SHADERS_ID];
+                    foreach(string item in cboxRequiredForge.Items)
+                    {
+                        if(version.Forge.Version == item)
+                        {
+                            cboxRequiredForge.SelectedItem = item;
+                        }
+                    }
+                    Manifest = version.Manifest;
                 }
                 catch
                 {
@@ -178,7 +197,7 @@ namespace BuddyPalVersionFileCreator
 
         public void EnterForgeDataEntry(string forgeVersionId, string installationName)
         {
-            LoadedForge = new Forge(installationName, forgeVersionId);
+            LoadedForge = new ForgePackage(installationName, forgeVersionId);
         }
         public void CancelForgeDataEntry()
         {
@@ -245,7 +264,7 @@ namespace BuddyPalVersionFileCreator
                 }
             }
 
-            foreach(ModPackage mod in Library.Mods)
+            foreach(ModPackage mod in Manifest.Mods)
             {
                 if(mod.Name == cmbModList.Text)
                 {
@@ -295,12 +314,21 @@ namespace BuddyPalVersionFileCreator
                             }
                     }
 
-                    foreach(string file in mod.Config.PathName)
+                    if(mod.Config.Type == ConfigPackage.ConfigType.Null)
                     {
-                        cmbModConfigFiles.Items.Add(file);
+                        cmbModConfigFiles.Enabled = false;
                     }
+                    else
+                    {
+                        cmbModConfigFiles.Enabled = true;
 
-                    cmbModConfigFiles.SelectedIndex = 0;
+                        foreach (string file in mod.Config.PathName)
+                        {
+                            cmbModConfigFiles.Items.Add(file);
+                        }
+
+                        cmbModConfigFiles.SelectedIndex = 0;
+                    }
                 }
             }
         }
@@ -321,7 +349,6 @@ namespace BuddyPalVersionFileCreator
                 radioModConfigTypeNull.Checked = false;
             }
         }
-
         private void radioModConfigTypeNull_CheckedChanged(object sender, EventArgs e)
         {
             if (radioModConfigTypeNull.Checked == true)
